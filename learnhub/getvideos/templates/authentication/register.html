@@ -1,5 +1,7 @@
+{% load static %}
 <form method="post">
-  {% csrf_token %}
+  {% csrf_token %} 
+  {% include 'partials/_messages.html' %}
   <div>
     {{ form.username.label_tag }}
     {{ form.username }}
