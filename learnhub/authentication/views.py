@@ -26,4 +26,30 @@ class Registeration(View):
 
             user = form.save()
             messages.success(request, f'account created for {user.username}.')
+            return redirect('login')
         return render(request, 'authentication/register.html', {'form': form})
+
+
+class UsernameValidation(View):
+    pass
+
+
+class Login(View):
+    def get(self, request):
+        return render(request, 'authentication/login.html')
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                messages.success(
+                    request, f'welcome {username}, you are now logged in')
+                # return redirect('home')
+            messages.error(request, 'Invalid credentials, try again')
+        else:
+            messages.error(request, 'Please fill all fields')
+
+        return render(request, 'authentication/login.html')
