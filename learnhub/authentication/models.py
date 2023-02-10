@@ -4,7 +4,6 @@ from django.conf import settings
 
 
 class User(AbstractUser):
-
     def __str__(self):
         return self.username
 
@@ -12,4 +11,5 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    phone_number = models.TextField()
+    
+    

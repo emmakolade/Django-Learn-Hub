@@ -1,6 +1,6 @@
 from django import forms
 from .models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import  PasswordChangeForm
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -25,3 +25,6 @@ class UserRegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class PasswordChangeForm(PasswordChangeForm):
+    pass
