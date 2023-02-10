@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
-from .forms import UserRegistrationForm, PasswordChangeForm
+from .forms import UserRegistrationForm, PasswordChangeForm, EditProfileForm
 from django.views.generic import View
 from .models import User, UserProfile
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+
+# RESIGRATION AND LOGIN VIEW
 
 
 class Registeration(View):
@@ -103,20 +105,43 @@ password_done = UserPasswordChangeDoneView.as_view()
 def user_profile(request):
     if request.user.is_authenticated:
         profile = request.user.userprofile
-        return render(request, 'authentication/user_profile.html', {'profile': profile})
+        context = {
+            'profile': profile,
+        }
+        return render(request, 'authentication/user_profile.html', context)
     else:
         messages.info(request, 'you need to login to access your profile')
         return redirect('login')
 
 
-@login_required
+@ login_required
 def edit_profile(request):
     profile = request.user.userprofile
     if request.method == 'POST':
-        profile.bio = request.POST.get('bio')
-        profile.vid_quality = request.POST.get('vid_quality')
-        profile.save()
-        messages.success(request, 'profile updated succesfully')
-        return redirect('user_profile')
-    context = {'profile': profile}
+        form = EditProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'profile updated succesfully')
+            return redirect('user_profile')
+    else:
+        form = EditProfileForm(instance=profile)
+
+    context = {
+        'form': form,
+    }
     return render(request, 'authentication/edit_profile.html', context)
+
+
+# def edit_profile(request):
+#     profile = request.user.userprofile
+#     if request.method == 'POST':
+#         form = EditProfileForm(request.POST, in )
+#         profile.bio = request.POST.get('bio')
+#         profile.vid_quality = request.POST.get('vid_quality')
+#         profile.save()
+#         messages.success(request, 'profile updated succesfully')
+#         return redirect('user_profile')
+#     context = {
+#         'profile': profile,
+#     }
+#     return render(request, 'authentication/edit_profile.html', context)

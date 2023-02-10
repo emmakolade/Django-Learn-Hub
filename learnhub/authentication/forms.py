@@ -1,8 +1,9 @@
 from django import forms
-from .models import User
+from .models import User, UserProfile
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 
+# USER REGISTRATION FORM
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(
@@ -28,5 +29,15 @@ class UserRegistrationForm(forms.ModelForm):
 
 # class UserLoginForm(AuthenticationForm)
 
+
 class PasswordChangeForm(PasswordChangeForm):
     pass
+
+
+# EDIT PROFILE FORM
+class EditProfileForm(forms.ModelForm):
+    vid_quality = forms.ChoiceField(choices=UserProfile.VIDEO_QUALITY)
+
+    class Meta:
+        model = UserProfile
+        fields = ['bio', 'vid_quality']

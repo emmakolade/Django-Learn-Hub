@@ -1,9 +1,21 @@
 {% extends 'base/base.html' %} {% load static %} {% block content %}
 
-<h1>Edit Profile</h1>
 {% include 'partials/_messages.html' %}
 
-<form method="post" enctype="multipart/form-data">
+<form method="post">
+  {% csrf_token %}
+  <div>
+    <label for="{{ form.bio.id_for_label }}">Bio:</label>
+    {{ form.bio }}
+  </div>
+  <div>
+    <label for="{{ form.vid_quality.id_for_label }}">Video Quality:</label>
+    {{ form.vid_quality }}
+  </div>
+  <button type="submit">Save</button>
+</form>
+
+{% comment %} <form method="post" enctype="multipart/form-data">
   {% csrf_token %} {% include 'partials/_messages.html' %}
 
   <div>
@@ -12,14 +24,23 @@
   </div>
   <div>
     <label for="vid_quality">Video Quality:</label>
+     <select name="vid_quality" id="vid_quality">
+      {% for vid_quality in quality_choice %}
+      <option name="vid_quality" value="{{ vid_quality.quality }}">
+        {{ vid_quality.quality }}
+      </option>
+      {% endfor %}
+    </select>
+    
     <input
       id="vid_quality"
-      type="text"
       name="vid_quality"
+      type="text"
       value="{{ profile.vid_quality }}"
     />
+    
   </div>
   <button type="submit">Save</button>
-</form>
+</form> {% endcomment %}
 
 {% endblock content %}
