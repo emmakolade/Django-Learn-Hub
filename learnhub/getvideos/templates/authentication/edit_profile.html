@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %} {% load static %} {% block content %}
+
+<h1>Edit Profile</h1>
+{% include 'partials/_messages.html' %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %} {% include 'partials/_messages.html' %}
+
+  <div>
+    <label for="bio">Bio:</label>
+    <textarea id="bio" name="bio">{{ profile.bio }}</textarea>
+  </div>
+  <div>
+    <label for="vid_quality">Video Quality:</label>
+    <input
+      id="vid_quality"
+      type="text"
+      name="vid_quality"
+      value="{{ profile.vid_quality }}"
+    />
+  </div>
+  <button type="submit">Save</button>
+</form>
+
+{% endblock content %}

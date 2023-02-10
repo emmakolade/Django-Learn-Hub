@@ -6,6 +6,7 @@ from django.views.generic import View
 from .models import User, UserProfile
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 class Registeration(View):
@@ -13,22 +14,27 @@ class Registeration(View):
         return render(request, 'authentication/register.html')
 
     def post(self, request):
-        form = UserRegistrationForm(request.POST)
+        if request.user.is_authenticated:
+            return redirect('home')
+        else:
+            form = UserRegistrationForm(request.POST)
 
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            if not User.objects.filter(username=username).exists():
-                if not User.objects.filter(email=email).exists():
-                    if len(password) < 8:
-                        messages.error(request, 'password is too short')
-                        return render(request, 'authentication/register.html', {'form': form})
+            if form.is_valid():
+                username = form.cleaned_data.get('username')
+                email = form.cleaned_data.get('email')
+                password = form.cleaned_data.get('password')
+                if not User.objects.filter(username=username).exists():
+                    if not User.objects.filter(email=email).exists():
+                        if len(password) < 8:
+                            messages.error(request, 'password is too short')
+                            return render(request, 'authentication/register.html', {'form': form})
 
-            user = form.save()
-            messages.success(request, f'account created for {user.username}.')
-            return redirect('login')
-        return render(request, 'authentication/register.html', {'form': form})
+                user = form.save()
+                UserProfile.objects.create(user=user)
+                messages.success(
+                    request, f'account created for {user.username}.')
+                return redirect('login')
+            return render(request, 'authentication/register.html', {'form': form})
 
 
 class UsernameValidation(View):
@@ -40,21 +46,25 @@ class Login(View):
         return render(request, 'authentication/login.html')
 
     def post(self, request):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        if username and password:
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                login(request, user)
-                messages.success(
-                    request, f'welcome <b>{username}<b>, you are now logged in')
-                # return redirect('home')
-            messages.error(request, 'invalid credentials, try again')
+        if request.user.is_authenticated:
+            return redirect('home')
         else:
-            messages.error(request, 'please fill all fields')
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            if username and password:
+                user = authenticate(
+                    request, username=username, password=password)
 
-        return render(request, 'authentication/login.html')
+                if user is not None:
+                    login(request, user)
+                    messages.success(
+                        request, f'welcome <b>{username}<b>, you are now logged in')
+                    return redirect('base')
+                messages.error(request, 'invalid credentials, try again')
+            else:
+                messages.error(request, 'please fill all fields')
+
+            return render(request, 'authentication/login.html')
 
 
 class Logout(View):
@@ -91,5 +101,22 @@ password_done = UserPasswordChangeDoneView.as_view()
 # USER PROFILE
 
 def user_profile(request):
+    if request.user.is_authenticated:
+        profile = request.user.userprofile
+        return render(request, 'authentication/user_profile.html', {'profile': profile})
+    else:
+        messages.info(request, 'you need to login to access your profile')
+        return redirect('login')
+
+
+@login_required
+def edit_profile(request):
     profile = request.user.userprofile
-    return render(request, 'authentication/user_profile.html', {'profile': profile})
+    if request.method == 'POST':
+        profile.bio = request.POST.get('bio')
+        profile.vid_quality = request.POST.get('vid_quality')
+        profile.save()
+        messages.success(request, 'profile updated succesfully')
+        return redirect('user_profile')
+    context = {'profile': profile}
+    return render(request, 'authentication/edit_profile.html', context)
