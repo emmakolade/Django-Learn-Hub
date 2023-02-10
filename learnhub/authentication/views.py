@@ -3,10 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
 from .forms import UserRegistrationForm, PasswordChangeForm
 from django.views.generic import View
-from .models import User
+from .models import User, UserProfile
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-# Create your views here.
 
 
 class Registeration(View):
@@ -49,7 +48,7 @@ class Login(View):
             if user is not None:
                 login(request, user)
                 messages.success(
-                    request, f'welcome {username}, you are now logged in')
+                    request, f'welcome <b>{username}<b>, you are now logged in')
                 # return redirect('home')
             messages.error(request, 'invalid credentials, try again')
         else:
@@ -62,11 +61,12 @@ class Logout(View):
     def get(self, request):
         logout(request)
         messages.success(request, 'you have been logged out')
-        return redirect('')
+        return redirect('base')
 
 
+# PASSWORD CHANGE AND PASSWORD DONE
 class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
-    login_url = '/login/'
+    login_url = '/authentication/login/'
     redirect_field_name = 'redirect_to'
     template_name = 'authentication/password_change_form.html'
     form_class = PasswordChangeForm
@@ -77,8 +77,19 @@ password_change = UserPasswordChangeView.as_view()
 
 
 class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
-    login_url = '/login/'
+    login_url = '/authentication/login/'
+    redirect_field_name = 'redirect_to'
     template_name = 'authentication/password_change_done.html'
 
 
 password_done = UserPasswordChangeDoneView.as_view()
+
+
+# PASSWORD RESET AND EMAIL VERIFICATION
+
+
+# USER PROFILE
+
+def user_profile(request):
+    profile = request.user.userprofile
+    return render(request, 'authentication/user_profile.html', {'profile': profile})
