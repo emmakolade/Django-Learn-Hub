@@ -7,7 +7,6 @@ from .models import User, UserProfile
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-
 # RESIGRATION AND LOGIN VIEW
 
 
@@ -17,7 +16,7 @@ class Registeration(View):
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('home')
+            return redirect('base')
         else:
             form = UserRegistrationForm(request.POST)
 
@@ -75,6 +74,8 @@ class Logout(View):
         messages.success(request, 'you have been logged out')
         return redirect('base')
 
+# PASSWORD RESET AND EMAIL VERIFICATION
+
 
 # PASSWORD CHANGE AND PASSWORD DONE
 class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
@@ -97,11 +98,10 @@ class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
 password_done = UserPasswordChangeDoneView.as_view()
 
 
-# PASSWORD RESET AND EMAIL VERIFICATION
+
 
 
 # USER PROFILE
-
 def user_profile(request):
     if request.user.is_authenticated:
         profile = request.user.userprofile
