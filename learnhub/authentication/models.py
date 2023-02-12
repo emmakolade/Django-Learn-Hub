@@ -8,7 +8,6 @@ class User(AbstractUser):
         return self.username
 
 
-
 class UserProfile(models.Model):
     VIDEO_QUALITY = (
         ('240p', '240p'),
@@ -23,8 +22,9 @@ class UserProfile(models.Model):
     vid_quality = models.CharField(
         choices=VIDEO_QUALITY, default=VIDEO_QUALITY[0][0], max_length=5)
 
+    class Meta:
+        verbose_name_plural = 'User Profile'
 
+    def __str__(self):
+        return self.bio
 
-
-# class VideoQuality(models.Model):
-    

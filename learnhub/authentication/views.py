@@ -16,7 +16,7 @@ class Registeration(View):
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('home')
+            return redirect('base')
         else:
             form = UserRegistrationForm(request.POST)
 

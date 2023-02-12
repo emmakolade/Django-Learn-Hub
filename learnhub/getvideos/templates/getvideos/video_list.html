@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %} {% load static %} {% block content %}
+<h1>Video List</h1>
+
+<form action="{% url 'video_list' %}" method="get">
+  <input type="text" name="q" id="" />
+  <button type="submit">Search</button>
+</form>
+{% for video in videos %}
+<h2>{{ video.title }}</h2>
+<p>{{ video.description }}</p>
+<a href="#{{ video.video_id }}" class="play-video">
+  <img src="{{ video.thumbnail }}" alt="{{ video.title }}" />
+</a>
+<a href="{% url 'download' video.video_id %}">Download Video</a>
+<div class="video-player" id="{{ video.video_id }}">
+  <iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/{{ video.video_id }}"
+    frameborder="0"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
+{% endfor %}
+
+<style>
+  .video-player {
+    display: none;
+  }
+</style>
+{% endblock content %}
+<script>
+  document.querySelectorAll(".play-video").forEach(function (element) {
+    element.addEventListener("click", function (event) {
+      event.preventDefault();
+      var videoId = event.target.hash.substring(1);
+      document.querySelector("#" + videoId).style.display = "block";
+    });
+  });
+</script>
