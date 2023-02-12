@@ -8,9 +8,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
+
 # RESIGRATION AND LOGIN VIEW
-
-
 class Registeration(View):
     def get(self, request):
         return render(request, 'authentication/register.html')
@@ -98,10 +97,17 @@ password_done = UserPasswordChangeDoneView.as_view()
 
 
 # PASSWORD RESET AND EMAIL VERIFICATION
+class PasswordReset(View):
+    pass
+
+
+class EmailVerification(View):
+    pass
+
+
 
 
 # USER PROFILE
-
 def user_profile(request):
     if request.user.is_authenticated:
         profile = request.user.userprofile
