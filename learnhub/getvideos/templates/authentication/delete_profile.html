@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %} {% block content %} 
+{% include 'partials/_messages.html' %}
+
+
+<h1>Delete Your Account</h1>
+<p>Are you sure you want to delete your account?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Delete Account</button>
+</form>
+
+{% endblock content %}

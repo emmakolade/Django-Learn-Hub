@@ -138,6 +138,19 @@ def edit_profile(request):
     return render(request, 'authentication/edit_profile.html', context)
 
 
+@login_required
+def delete_profile(request):
+    profile = request.user.userprofil
+    if request.method=='POST':
+        profile.delete()
+        logout(request)
+        messages.info(request, 'account deleted successfully')
+        return redirect('home')
+    return render(request, 'authentication/delete_profile.html')
+    
+    
+    
+    
 # def edit_profile(request):
 #     profile = request.user.userprofile
 #     if request.method == 'POST':

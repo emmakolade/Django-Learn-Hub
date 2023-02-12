@@ -7,6 +7,7 @@ from django.http import FileResponse
 from pytube import YouTube
 import requests
 from django.contrib import messages
+from urllib.parse import quote
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
@@ -55,17 +56,49 @@ def get_videos(request):
 # PYTUBE TO DOWNLOAD VIDEOS
 @login_required
 def download_video(request, video_id):
-    video = GetVideos.objects.get(video_id=video_id)
-    url = video.url
+    url = f'https://www.youtube.com/watch?v={video_id}'
     yt = YouTube(url)
+    stream = yt.streams.filter(progressive=True, resolution='480p', file_extension='mp4')
+    # stream = yt.streams.order_by('resolution')
+    # stream = yt.streams.desc()
     stream = yt.streams.first()
-    file_name = f"{video.title}.mp4"
-    file_path = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), file_name)
-    stream.download(file_path)
-    file = open(file_path, 'rb')
-    response = FileResponse(file, content_type='application/force-download')
-    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-    return response
+    # encode_title= quote(title)
+    download_name = 'video'
+    stream.download()
+    # file = open(download_name, 'rb')
+    # response = FileResponse(file, content_type='application/force-download')
+    # response['Content-Disposition'] = f'attachment; filename={download_name}'
+    # return response
+
+
+#  user = request.user.userprofile
+#     url = f'https://www.youtube.com/watch?v={video_id}'
+#     yt = YouTube(url)
+
+#     quality = user.vid_quality
+
+#     stream = yt.streams.get_by_resolution('360p')
+#     if stream is None:
+#         stream = yt.streams.first()
+#     download_name = 'video'
+#     stream.download('/downloads')
+#     file = open(download_name, 'rb')
+#     response = FileResponse(file, content_type='application/force-download')
+#     response['Content-Disposition'] = f'attachment; filename="{download_name}.mp4"'
+#     return response
+# def download_video(request, video_id):
+#     # video = GetVideos.objects.get(video_id=video_id)
+#     video_id =request.GET.get('video_data', None)
+#     url = video_.url
+#     yt = YouTube(url)
+#     stream = yt.streams.first()
+#     file_name = f"{video.title}.mp4"
+#     file_path = os.path.join(os.path.dirname(
+#         os.path.abspath(__file__)), file_name)
+#     stream.download(file_path)
+#     file = open(file_path, 'rb')
+#     response = FileResponse(file, content_type='application/force-download')
+#     response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+#     return response
 
 # GET https: // youtube.googleapis.com/youtube/v3/search?part = snippet &maxResults = 25&q = surfing&key = [YOUR_API_KEY] HTTP/1.1

@@ -6,7 +6,7 @@ class GetVideos(models.Model):
     description = models.TextField()
     url = models.URLField()
     thumbnail = models.URLField()
-    video_id = models.CharField(max_length=100)
+    # video_id = models.CharField(max_length=100)
 
     def __str__(self):
         return self.title
