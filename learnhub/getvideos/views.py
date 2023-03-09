@@ -15,7 +15,7 @@ load_dotenv(dotenv_path)
 def base(request):
     return render(request, 'base/base.html')
 
-# GET YOUTUBE TUTORIALS FROM YOUTUBE
+# GET YOUTUBE VIDOES FROM YOUTUBE API
 
 
 @login_required
@@ -65,11 +65,11 @@ def download_video(request, video_id):
     # encode_title= quote(title)
     download_name = 'video'
     stream.download()
+
     # file = open(download_name, 'rb')
     # response = FileResponse(file, content_type='application/force-download')
     # response['Content-Disposition'] = f'attachment; filename={download_name}'
     # return response
-
 
 #  user = request.user.userprofile
 #     url = f'https://www.youtube.com/watch?v={video_id}'

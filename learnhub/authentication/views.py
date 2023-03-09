@@ -140,12 +140,12 @@ def edit_profile(request):
 
 @login_required
 def delete_profile(request):
-    profile = request.user.userprofil
+    user = request.user
     if request.method=='POST':
-        profile.delete()
+        user.delete()
         logout(request)
         messages.info(request, 'account deleted successfully')
-        return redirect('home')
+        return redirect('base')
     return render(request, 'authentication/delete_profile.html')
     
     
