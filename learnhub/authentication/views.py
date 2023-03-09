@@ -48,7 +48,7 @@ class Login(View):
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('home')
+            return redirect('base')
         else:
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -95,8 +95,7 @@ class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
 
 password_done = UserPasswordChangeDoneView.as_view()
 
-
-# PASSWORD RESET AND EMAIL VERIFICATION
+# TODO: PASSWORD RESET AND EMAIL VERIFICATION
 class PasswordReset(View):
     pass
 
@@ -147,20 +146,3 @@ def delete_profile(request):
         messages.info(request, 'account deleted successfully')
         return redirect('base')
     return render(request, 'authentication/delete_profile.html')
-    
-    
-    
-    
-# def edit_profile(request):
-#     profile = request.user.userprofile
-#     if request.method == 'POST':
-#         form = EditProfileForm(request.POST, in )
-#         profile.bio = request.POST.get('bio')
-#         profile.vid_quality = request.POST.get('vid_quality')
-#         profile.save()
-#         messages.success(request, 'profile updated succesfully')
-#         return redirect('user_profile')
-#     context = {
-#         'profile': profile,
-#     }
-#     return render(request, 'authentication/edit_profile.html', context)
