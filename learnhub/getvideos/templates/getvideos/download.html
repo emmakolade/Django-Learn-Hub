@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Select a resolution to download "{{ video_id }}"</h2>
+<form method="get">
+    <select name="resolution">
+        {% for stream in streams %}
+            <option value="{{ stream.resolution }}">{{ stream.resolution }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Download</button>
+</form>
+{% endblock %}

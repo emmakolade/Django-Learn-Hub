@@ -7,9 +7,45 @@ from .models import User, UserProfile
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-
+import requests
 
 # RESIGRATION AND LOGIN VIEW
+
+# class Registeration(View):
+#     def get(self, request):
+#         return render(request, 'authentication/register.html')
+
+#     def post(self, request):
+#         if request.user.is_authenticated:
+#             return redirect('base')
+#         else:
+#             form = UserRegistrationForm(request.POST)
+
+#             if form.is_valid():
+#                 username = form.cleaned_data.get('username')
+#                 email = form.cleaned_data.get('email')
+#                 password = form.cleaned_data.get('password')
+#                 if not User.objects.filter(username=username).exists():
+#                     url = f'https://api.emailchecker.co/v1/verify?email={email}&apikey={API_KEY}'
+#                     response = requests.get(url).json()
+#                     if response['result'] == 'valid':
+#                         if len(password) < 8:
+#                             messages.error(request, 'Password is too short')
+#                             return render(request, 'authentication/register.html', {'form': form})
+#                         user = form.save()
+#                         UserProfile.objects.create(user=user)
+#                         messages.success(
+#                             request, f'Account created for {user.username}.')
+#                         return redirect('login')
+#                     else:
+#                         messages.error(request, 'Invalid email address')
+#                         return render(request, 'authentication/register.html', {'form': form})
+#                 else:
+#                     messages.error(request, 'Username already exists')
+#                     return render(request, 'authentication/register.html', {'form': form})
+
+#             return render(request, 'authentication/register.html', {'form': form})
+
 class Registeration(View):
     def get(self, request):
         return render(request, 'authentication/register.html')
@@ -38,17 +74,13 @@ class Registeration(View):
             return render(request, 'authentication/register.html', {'form': form})
 
 
-class UsernameValidation(View):
-    pass
-
-
 class Login(View):
     def get(self, request):
         return render(request, 'authentication/login.html')
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('base')
+            return redirect('video_list')
         else:
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -60,7 +92,7 @@ class Login(View):
                     login(request, user)
                     messages.success(
                         request, f'welcome <b>{username}<b>, you are now logged in')
-                    return redirect('base')
+                    return redirect('video_list')
                 messages.error(request, 'invalid credentials, try again')
             else:
                 messages.error(request, 'please fill all fields')
@@ -86,7 +118,6 @@ class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
 
 password_change = UserPasswordChangeView.as_view()
 
-
 class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
     login_url = '/authentication/login/'
     redirect_field_name = 'redirect_to'
@@ -95,6 +126,7 @@ class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
 
 password_done = UserPasswordChangeDoneView.as_view()
 
+
 # TODO: PASSWORD RESET AND EMAIL VERIFICATION
 class PasswordReset(View):
     pass
@@ -102,8 +134,6 @@ class PasswordReset(View):
 
 class EmailVerification(View):
     pass
-
-
 
 
 # USER PROFILE
@@ -140,7 +170,7 @@ def edit_profile(request):
 @login_required
 def delete_profile(request):
     user = request.user
-    if request.method=='POST':
+    if request.method == 'POST':
         user.delete()
         logout(request)
         messages.info(request, 'account deleted successfully')
