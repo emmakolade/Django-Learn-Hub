@@ -1,0 +1,9 @@
+<h2>{{ video_title }}</h2>
+<p>Available video qualities:</p>
+<ul>
+  {% for quality in video_qualities %}
+  <li>
+    <a href="{% url 'download_quality' video_id quality %}">{{ quality }}</a>
+  </li>
+  {% endfor %}
+</ul>
